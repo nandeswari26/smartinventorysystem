@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Card ===== */
+.card-container {
+    backdrop-filter: blur(18px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 30px;
+    border-radius: 22px;
+    box-shadow: 0 12px 45px rgba(0,0,0,0.25);
+    color: white;
+}
+
+/* ===== Table Styling ===== */
+.table {
+    color: white;
+}
+
+.table thead {
+    background: rgba(255,255,255,0.15);
+}
+
+.table-hover tbody tr {
+    transition: all 0.25s ease;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(255,255,255,0.12);
+    transform: scale(1.01);
+}
+
+/* ===== Supplier Badge ===== */
+.supplier-badge {
+    background: linear-gradient(45deg, #1cc88a, #17a673);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* ===== Low Stock Badge ===== */
+.low-stock-badge {
+    background: linear-gradient(45deg, #e74a3b, #c0392b);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ===== Good Badge ===== */
+.good-badge {
+    background: linear-gradient(45deg, #6366f1, #4f46e5);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ===== Search ===== */
+.search-box {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 18px;
+    color: white;
+}
+
+.search-box::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.search-box:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.4);
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+    padding: 40px 0;
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+</style>
+
+<div class="fade-in">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">🚚 Suppliers Overview</h3>
+</div>
+
+<div class="card-container">
+
+    <!-- Search -->
+    <div class="mb-4">
+        <input type="text" id="searchInput"
+               class="form-control search-box"
+               placeholder="🔍 Search suppliers..."
+               onkeyup="searchSupplier()">
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="supplierTable">
+            <thead>
+                <tr>
+                    <th>Supplier Name</th>
+                    <th>Total Products</th>
+                    <th>Low Stock Items</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>
+                        <span class="supplier-badge text-white">
+                            {{ supplier.supplier }}
+                        </span>
+                    </td>
+                    <td>{{ supplier.total_products }}</td>
+                    <td>
+                        {% if supplier.low_stock_count > 0 %}
+                            <span class="low-stock-badge text-white">
+                                {{ supplier.low_stock_count }} Low
+                            </span>
+                        {% else %}
+                            <span class="good-badge text-white">
+                                All Good
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center empty-state">
+                        🚫 No suppliers available.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+function searchSupplier() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#supplierTable tbody tr");
+
+    rows.forEach(row => {
+        row.style.display =
+            row.innerText.toLowerCase().includes(input)
+            ? ""
+            : "none";
+    });
+}
+</script>
+
+{% endblock %}

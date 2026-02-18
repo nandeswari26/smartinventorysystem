@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Table Card ===== */
+.table-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    color: white;
+}
+
+/* ===== Add Button ===== */
+.btn-success-gradient {
+    background: linear-gradient(45deg, #1cc88a, #17a673);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 18px;
+    transition: 0.3s ease;
+}
+
+.btn-success-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(28,200,138,0.4);
+}
+
+/* ===== Table Styling ===== */
+.table {
+    color: white;
+}
+
+.table thead {
+    background: rgba(255,255,255,0.15);
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(255,255,255,0.1);
+    transition: 0.3s;
+}
+
+/* ===== Revenue Badge ===== */
+.revenue-badge {
+    background: linear-gradient(45deg, #20c997, #198754);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.search-box {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 15px;
+    color: white;
+}
+
+.search-box::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+</style>
+
+<div class="fade-in">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">🛒 Sales History</h3>
+    <a href="{% url 'add_sale' %}" class="btn btn-success-gradient text-white">
+        ➕ Add Sale
+    </a>
+</div>
+
+<div class="table-card">
+
+    <!-- Search -->
+    <div class="mb-4">
+        <input type="text" id="searchInput" class="form-control search-box"
+               placeholder="🔍 Search sales..." onkeyup="searchTable()">
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="salesTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Total (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                <tr>
+                    <td>{{ sale.date|date:"d M Y, h:i A" }}</td>
+                    <td>{{ sale.product.name }}</td>
+                    <td>₹ {{ sale.product.price|floatformat:2 }}</td>
+                    <td>{{ sale.quantity_sold }}</td>
+                    <td>
+                        <span class="revenue-badge text-white">
+                            ₹ {{ sale.total_price|floatformat:2 }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        No sales recorded yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+function searchTable() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#salesTable tbody tr");
+
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+</script>
+
+{% endblock %}

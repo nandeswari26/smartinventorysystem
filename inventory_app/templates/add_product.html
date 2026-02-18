@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Form Card ===== */
+.form-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+    max-width: 750px;
+    margin: auto;
+    color: white;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.form-control, select {
+    background: rgba(255,255,255,0.15) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 12px !important;
+}
+
+.form-control:focus, select:focus {
+    box-shadow: 0 0 10px rgba(99,102,241,0.6) !important;
+    background: rgba(255,255,255,0.2) !important;
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #6366f1, #4f46e5);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+}
+
+.btn-back {
+    border-radius: 20px;
+}
+
+.error-box {
+    background: rgba(255,0,0,0.2);
+    border: 1px solid rgba(255,0,0,0.4);
+    padding: 12px;
+    border-radius: 12px;
+}
+
+</style>
+
+<div class="container mt-4 fade-in">
+
+    <div class="form-card">
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>
+                {% if form.instance.pk %}
+                    ✏ Update Product
+                {% else %}
+                    ➕ Add New Product
+                {% endif %}
+            </h3>
+
+            <a href="{% url 'product_list' %}" class="btn btn-secondary btn-sm btn-back">
+                ⬅ Back
+            </a>
+        </div>
+
+        <!-- Errors -->
+        {% if form.errors %}
+        <div class="error-box mb-4">
+            <strong>Please fix the following errors:</strong>
+            {{ form.errors }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row g-4">
+
+                <!-- Product Name -->
+                <div class="col-md-6">
+                    <label class="form-label">Product Name</label>
+                    {{ form.name }}
+                </div>
+
+                <!-- Category (FIXED VERSION) -->
+                <div class="col-md-6">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-control" required>
+                        <option value="">-- Select Category --</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}"
+                                {% if form.instance.category.id == category.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Supplier -->
+                <div class="col-md-6">
+                    <label class="form-label">Supplier</label>
+                    {{ form.supplier }}
+                </div>
+
+                <!-- Price -->
+                <div class="col-md-6">
+                    <label class="form-label">Price (₹)</label>
+                    {{ form.price }}
+                </div>
+
+                <!-- Current Stock -->
+                <div class="col-md-6">
+                    <label class="form-label">Current Stock</label>
+                    {{ form.current_stock }}
+                </div>
+
+                <!-- Reorder Level -->
+                <div class="col-md-6">
+                    <label class="form-label">Reorder Level</label>
+                    {{ form.reorder_level }}
+                </div>
+
+            </div>
+
+            <!-- Submit -->
+            <div class="mt-5 text-end">
+                <button type="submit" class="btn btn-gradient text-white">
+                    {% if form.instance.pk %}
+                        Update Product
+                    {% else %}
+                        Save Product
+                    {% endif %}
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

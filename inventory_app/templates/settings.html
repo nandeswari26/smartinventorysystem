@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Card ===== */
+.settings-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+    max-width: 750px;
+    margin: auto;
+    color: white;
+}
+
+/* ===== Section Titles ===== */
+.section-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* ===== Role Badges ===== */
+.admin-badge {
+    background: linear-gradient(45deg, #e74a3b, #c0392b);
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.staff-badge {
+    background: linear-gradient(45deg, #4e73df, #224abe);
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.user-badge {
+    background: linear-gradient(45deg, #20c997, #198754);
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+/* ===== Buttons ===== */
+.btn-dashboard {
+    background: linear-gradient(45deg, #6366f1, #4f46e5);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: 0.3s ease;
+}
+
+.btn-dashboard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+}
+
+.btn-logout {
+    background: linear-gradient(45deg, #e74a3b, #c0392b);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: 0.3s ease;
+}
+
+.btn-logout:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(231,74,59,0.4);
+}
+
+hr {
+    border-color: rgba(255,255,255,0.2);
+}
+
+</style>
+
+<div class="container mt-4 fade-in">
+
+    <div class="settings-card">
+
+        <h3 class="fw-bold mb-4">⚙ System Settings</h3>
+
+        <!-- System Info -->
+        <div class="mb-4">
+            <div class="section-title">📦 Inventory System</div>
+            <p class="opacity-75">
+                Smart Inventory Management System
+            </p>
+        </div>
+
+        <hr>
+
+        <!-- User Info -->
+        <div class="mb-3">
+            <strong>Logged in as:</strong>
+            {{ request.user.username }}
+        </div>
+
+        <div class="mb-3">
+            <strong>User Role:</strong>
+            {% if request.user.is_superuser %}
+                <span class="admin-badge text-white">Admin</span>
+            {% elif request.user.is_staff %}
+                <span class="staff-badge text-white">Staff</span>
+            {% else %}
+                <span class="user-badge text-white">User</span>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <!-- Quick Actions -->
+        <div class="mt-4 d-flex gap-3">
+            <a href="{% url 'dashboard' %}" class="btn btn-dashboard text-white">
+                📊 Go to Dashboard
+            </a>
+
+            <a href="{% url 'logout' %}" class="btn btn-logout text-white">
+                🔒 Logout
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

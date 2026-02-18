@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Form Card ===== */
+.form-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+    max-width: 650px;
+    margin: auto;
+    color: white;
+}
+
+/* ===== Inputs ===== */
+.form-control, select {
+    background: rgba(255,255,255,0.15) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 12px !important;
+}
+
+.form-control:focus, select:focus {
+    box-shadow: 0 0 10px rgba(40,167,69,0.6) !important;
+    background: rgba(255,255,255,0.2) !important;
+}
+
+/* ===== Buttons ===== */
+.btn-success-gradient {
+    background: linear-gradient(45deg, #1cc88a, #17a673);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: 0.3s ease;
+}
+
+.btn-success-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(28,200,138,0.4);
+}
+
+/* ===== Back Button ===== */
+.btn-back {
+    border-radius: 20px;
+}
+
+/* ===== Message Box ===== */
+.glass-alert {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.error-box {
+    background: rgba(255,0,0,0.2);
+    border: 1px solid rgba(255,0,0,0.4);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+</style>
+
+<div class="container mt-4 fade-in">
+
+    <div class="form-card">
+
+        <!-- Title -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold">🛒 Record Sale</h3>
+            <a href="{% url 'sale_history' %}" class="btn btn-secondary btn-sm btn-back">
+                ⬅ Back
+            </a>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="glass-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Errors -->
+        {% if form.errors %}
+            <div class="error-box">
+                <strong>Please fix the following errors:</strong>
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row g-4">
+
+                <div class="col-12">
+                    <label class="form-label">Select Product</label>
+                    {{ form.product }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Quantity Sold</label>
+                    {{ form.quantity_sold }}
+                </div>
+
+            </div> <!-- ✅ FIXED Missing closing div -->
+
+            <!-- Submit -->
+            <div class="mt-5 text-end">
+                <button type="submit" class="btn btn-success-gradient text-white">
+                    💾 Record Sale
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

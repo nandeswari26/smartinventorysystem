@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* ===== Smooth Page Animation ===== */
+.fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Stat Cards ===== */
+.stat-card {
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: 0.4s ease;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+}
+
+.stat-title {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 600;
+}
+
+/* ===== Gradient Accent Borders ===== */
+.blue { border-left: 5px solid #4e73df; }
+.green { border-left: 5px solid #1cc88a; }
+.orange { border-left: 5px solid #f6c23e; }
+.purple { border-left: 5px solid #6f42c1; }
+
+/* ===== Glass Chart Card ===== */
+.chart-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    transition: 0.3s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Chart containers */
+.bar-container,
+.pie-container {
+    height: 300px;
+}
+
+</style>
+
+<div class="fade-in">
+
+<h3 class="mb-4 fw-bold">📊 Dashboard Overview</h3>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="stat-card blue">
+            <div class="stat-title">Total Products</div>
+            <div class="stat-value">{{ total_products }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card green">
+            <div class="stat-title">Total Sales</div>
+            <div class="stat-value">{{ total_sales }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card orange">
+            <div class="stat-title">Total Revenue</div>
+            <div class="stat-value">₹ {{ total_revenue|floatformat:2 }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card purple">
+            <div class="stat-title">Top Selling Product</div>
+            <div class="stat-value">
+                {% if top_product %}
+                    {{ top_product.product__name }} 
+                    ({{ top_product.total_sold }})
+                {% else %}
+                    No Data
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= Charts Section ================= -->
+<div class="row mt-5 g-4">
+
+    <div class="col-md-6">
+        <div class="chart-card">
+            <h5 class="mb-3">📊 Monthly Sales</h5>
+            <div class="bar-container">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="chart-card text-center">
+            <h5 class="mb-3">🥧 Product-wise Sales</h5>
+            <div class="pie-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+const months = JSON.parse('{{ months|escapejs }}');
+const salesData = JSON.parse('{{ sales_data|escapejs }}');
+const productLabels = JSON.parse('{{ product_labels|escapejs }}');
+const productValues = JSON.parse('{{ product_values|escapejs }}');
+
+// ===== Bar Chart =====
+new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: months.length ? months : ["No Data"],
+        datasets: [{
+            label: 'Sales',
+            data: salesData.length ? salesData : [0],
+            backgroundColor: '#6366f1',
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: { beginAtZero: true }
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+
+// ===== Pie Chart =====
+new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+        labels: productLabels.length ? productLabels : ["No Data"],
+        datasets: [{
+            data: productValues.length ? productValues : [1],
+            backgroundColor: [
+                '#6366f1',
+                '#1cc88a',
+                '#f6c23e',
+                '#e74a3b',
+                '#6f42c1',
+                '#20c9a6',
+                '#fd7e14'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '60%'
+    }
+});
+</script>
+
+{% endblock %}

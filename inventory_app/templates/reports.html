@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Summary Cards ===== */
+.report-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    transition: 0.3s ease;
+    color: white;
+}
+
+.report-card:hover {
+    transform: translateY(-8px);
+}
+
+/* Accent Borders */
+.blue { border-left: 5px solid #4e73df; }
+.green { border-left: 5px solid #1cc88a; }
+.orange { border-left: 5px solid #f6c23e; }
+
+/* ===== Glass Table Card ===== */
+.table-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    color: white;
+}
+
+/* Table Styling */
+.table {
+    color: white;
+}
+
+.table thead {
+    background: rgba(255,255,255,0.15);
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Revenue Styling */
+.revenue-text {
+    font-weight: 600;
+    color: #20c997;
+}
+
+/* Print Button */
+.btn-print {
+    background: linear-gradient(45deg, #343a40, #000);
+    border: none;
+    border-radius: 30px;
+    padding: 8px 18px;
+    transition: 0.3s ease;
+}
+
+.btn-print:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+</style>
+
+<div class="fade-in">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">📊 Reports Summary</h3>
+    <button onclick="window.print()" class="btn btn-print text-white">
+        🖨 Print Report
+    </button>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+        <div class="report-card blue">
+            <h6>Total Products</h6>
+            <h3>{{ total_products }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="report-card green">
+            <h6>Total Sales</h6>
+            <h3>{{ total_sales }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="report-card orange">
+            <h6>Total Revenue</h6>
+            <h3>₹ {{ total_revenue|floatformat:2 }}</h3>
+        </div>
+    </div>
+
+</div>
+
+<!-- Sales Table -->
+<div class="table-card">
+
+    <h5 class="mb-3">🛒 Sales Details</h5>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Total (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                <tr>
+                    <td>{{ sale.date|date:"d M Y, h:i A" }}</td>
+                    <td>{{ sale.product.name }}</td>
+                    <td>₹ {{ sale.product.price|floatformat:2 }}</td>
+                    <td>{{ sale.quantity_sold }}</td>
+                    <td class="revenue-text">
+                        ₹ {{ sale.total_price|floatformat:2 }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        No sales data available.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ===== Animation ===== */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Glass Card ===== */
+.table-card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    color: white;
+}
+
+/* ===== Table Styling ===== */
+.table {
+    color: white;
+}
+
+.table thead {
+    background: rgba(255,255,255,0.15);
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(255,255,255,0.1);
+    transition: 0.3s;
+}
+
+/* ===== Username Badge ===== */
+.user-badge {
+    background: linear-gradient(45deg, #6366f1, #4f46e5);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* ===== Email Styling ===== */
+.email-text {
+    opacity: 0.85;
+}
+
+/* ===== Role Badge ===== */
+.admin-badge {
+    background: linear-gradient(45deg, #e74a3b, #c0392b);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.user-role {
+    background: linear-gradient(45deg, #20c997, #198754);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+</style>
+
+<div class="fade-in">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">👥 System Users</h3>
+</div>
+
+<div class="table-card">
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Date Joined</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <span class="user-badge text-white">
+                            {{ user.username }}
+                        </span>
+                    </td>
+                    <td class="email-text">
+                        {{ user.email|default:"-" }}
+                    </td>
+                    <td>
+                        {{ user.date_joined|date:"d M Y, h:i A" }}
+                    </td>
+                    <td>
+                        {% if user.is_superuser %}
+                            <span class="admin-badge text-white">
+                                Admin
+                            </span>
+                        {% else %}
+                            <span class="user-role text-white">
+                                User
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        No users found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}
